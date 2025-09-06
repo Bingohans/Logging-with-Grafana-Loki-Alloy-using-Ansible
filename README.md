@@ -13,13 +13,13 @@ This project demonstrates a real-world scenario of setting up, troubleshooting, 
 * **Visualization:** A separate Grafana instance (not included in this repo) is used to query Loki and display the logs.
 
 ## Repository Structure
-├── README.md               # This file
-├── deploy_alloy.yml        # The main Ansible playbook for deploying Alloy agents
-├── inventory.ini           # Ansible inventory file defining the target nodes
-├── loki-server/
-│   └── docker-compose.yml  # Docker Compose file for the central Loki server
-└── templates/
-└── config.alloy.j2     # Jinja2 template for the Alloy configuration
+├── README.md               # This file  
+├── deploy_alloy.yml        # The main Ansible playbook for deploying Alloy agents  
+├── inventory.ini           # Ansible inventory file defining the target nodes  
+├── loki-server/  
+│   └── docker-compose.yml  # Docker Compose file for the central Loki server  
+└── templates/  
+└── config.alloy.j2     # Jinja2 template for the Alloy configuration  
 
 ## Setup and Installation
 
