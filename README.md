@@ -1,5 +1,11 @@
 # Centralized Logging with Grafana Loki & Alloy using Ansible
 
+![Project Status](https://img.shields.io/badge/status-complete-green)
+![Ansible Version](https://img.shields.io/badge/Ansible-%5E2.16-blue)
+![Loki Version](https://img.shields.io/badge/Loki-latest-orange)
+![Alloy Version](https://img.shields.io/badge/Alloy-latest-blueviolet)
+![Grafana Version](https://img.shields.io/badge/Grafana-%5E10.0-yellow)
+
 This repository contains the configuration and Ansible playbook to deploy a centralized logging system. The setup consists of multiple nodes running Grafana Alloy agents, which collect systemd journal logs and ship them to a central Grafana Loki instance for storage and visualization in Grafana.
 
 This project demonstrates a real-world scenario of setting up, troubleshooting, and securing a modern observability stack.
