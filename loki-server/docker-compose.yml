@@ -1,0 +1,16 @@
+networks:
+  loki:
+
+services:
+  loki:
+    image: grafana/loki:latest
+    container_name: loki
+    restart: unless-stopped
+    ports:
+      - "3100:3100"
+    # The command points to a default config file inside the image,
+    # which is suitable for testing and small-scale deployments.
+    # For production, you should mount your own config file.
+    command: -config.file=/etc/loki/local-config.yaml
+    networks:
+      - loki
