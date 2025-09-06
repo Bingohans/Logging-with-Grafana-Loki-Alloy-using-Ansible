@@ -19,7 +19,7 @@ This project demonstrates a real-world scenario of setting up, troubleshooting, 
 ├── loki-server/  
 │&nbsp;&nbsp;&nbsp;&nbsp; └── docker-compose.yml  # Docker Compose file for the central Loki server  
 └── templates/  
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;└── config.alloy.j2     # Jinja2 template for the Alloy configuration  
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;└── config.alloy.j2     # Jinja2 template for the Alloy configuration  
 
 ## Setup and Installation
 
