@@ -1,0 +1,57 @@
+// This is the Jinja2 template for the Grafana Alloy configuration.
+// Ansible will replace {{ inventory_hostname }} and {{ loki_url }}.
+
+// Define a relabeling rule to extract useful labels from the journal entries.
+loki.relabel "journal_relabel" {
+  forward_to = [] // This component doesn't forward, it only defines rules.
+
+  // Extract the systemd unit name and label it as 'unit'.
+  rule {
+    source_labels = ["__journal__systemd_unit"]
+    target_label  = "unit"
+  }
+
+  // Extract the hostname and label it as 'hostname'.
+  rule {
+    source_labels = ["__journal__hostname"]
+    target_label  = "hostname"
+  }
+}
+
+// Scrape logs from the systemd journal.
+loki.source.journal "journal" {
+  forward_to    = [loki.process.filter_logs.receiver]
+  relabel_rules = loki.relabel.journal_relabel.rules
+  labels        = {
+    // Add a static label 'node' with the Ansible inventory hostname (e.g., "vps1").
+    node = "{{ inventory_hostname }}",
+    source = "journal"
+  }
+  format_as_json = true  // Keep journal fields as JSON for better searchability.
+  max_age        = "24h" // For performance, only look at logs from the last 24 hours on startup.
+}
+
+// (Optional) Process logs to drop noisy or unwanted entries before sending.
+loki.process "filter_logs" {
+  forward_to = [loki.write.default.receiver]
+
+  stage.drop {
+    // Example: Drop common noisy log entries. Customize this to your needs.
+    expression          = ".*Connection closed by.*|.*other noisy pattern.*"
+    drop_counter_reason = "noisy_log"
+  }
+}
+
+// Define the Loki endpoint where logs will be sent.
+loki.write "default" {
+  endpoint {
+    // The URL is provided by the Ansible playbook variable.
+    url = "{{ loki_url }}"
+
+    // If authentication is needed for your Loki instance, uncomment and configure this block:
+    // basic_auth {
+    //   username = "your-instance-id"
+    //   password = "your-api-key"
+    // }
+  }
+}
