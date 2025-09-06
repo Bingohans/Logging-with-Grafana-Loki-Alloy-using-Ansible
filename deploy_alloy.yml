@@ -1,0 +1,44 @@
+# This playbook deploys the Grafana Alloy agent as a Docker container
+# to all hosts in the 'alloy_nodes' group.
+- name: Deploy Grafana Alloy in Docker (assumes Docker is pre-installed)
+  hosts: alloy_nodes
+  become: yes
+  vars:
+    alloy_version: "latest"
+    loki_url: "http://loki-server:3100/loki/api/v1/push" # IMPORTANT: Replace with your actual Loki IP
+
+  tasks:
+    - name: Ensure Alloy config directory exists
+      ansible.builtin.file:
+        path: /etc/alloy
+        state: directory
+        mode: '0755'
+
+    - name: Ensure Alloy data directory exists for positions
+      ansible.builtin.file:
+        path: /var/lib/alloy/data
+        state: directory
+        mode: '0755'
+        owner: root
+
+    - name: Deploy Alloy configuration from template
+      ansible.builtin.template:
+        src: templates/config.alloy.j2
+        dest: /etc/alloy/config.alloy
+        mode: '0644'
+
+    - name: Run Alloy Docker container
+      community.docker.docker_container:
+        name: alloy
+        image: "grafana/alloy:{{ alloy_version }}"
+        state: started
+        restart_policy: always
+        pull: true
+        network_mode: host
+        command: "run --server.http.listen-addr=0.0.0.0:12345 --storage.path=/var/lib/alloy/data /etc/alloy/config.alloy"
+        volumes:
+          - "/etc/alloy/config.alloy:/etc/alloy/config.alloy:ro"
+          - "/var/lib/alloy/data:/var/lib/alloy/data"          # To store log positions
+          - "/run/log/journal:/run/log/journal:ro"             # For live journal logs
+          - "/var/log/journal:/var/log/journal:ro"             # For persistent journal logs
+          - "/etc/machine-id:/etc/machine-id:ro"               # CRITICAL for journal access
